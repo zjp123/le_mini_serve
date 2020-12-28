@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/zjp123/le_mini_serve/issues"
   },
-  "homepage": "https://github.com/zjp123/le_mini_serve#readme"
+  "homepage": "https://github.com/zjp123/le_mini_serve#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11"
+  },
+  "dependencies": {
+    "@koa/router": "^10.0.0",
+    "koa": "^2.13.0",
+    "mongoose": "^5.11.8"
+  }
 }

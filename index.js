@@ -1,22 +1,11 @@
 const Koa = require('koa');
 const app = new Koa();
+const apiRouter = require('./router/route')
 
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  ctx.set('X-Response-Time', `${ms}ms`);
-});
-
-// logger
-
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  console.log(`${ctx.method} ${ctx.url} - ${ms}`);
-});
-
+app
+  .use(apiRouter.routes())
+  .use(apiRouter.allowedMethods());
+  
 app.use(async ctx => {
   ctx.body = 'Hello World';
 });
@@ -25,6 +14,6 @@ app.on('error', (err, ctx) => {
   console.log('server error', err, ctx);
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('成功监听3000端口');
 });
