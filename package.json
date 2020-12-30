@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "pro": "cross-env NODE_ENV=production nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,11 +19,12 @@
   },
   "homepage": "https://github.com/zjp123/le_mini_serve#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.12.11"
+    "@babel/plugin-transform-async-to-generator": "^7.12.1",
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
     "@koa/router": "^10.0.0",
     "koa": "^2.13.0",
-    "mongoose": "^5.11.8"
+    "mongoose": "^5.11.9"
   }
 }
