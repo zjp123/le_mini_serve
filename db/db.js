@@ -52,21 +52,23 @@ client.once("open", async () => {
   } });
 
   const DbHandle = function () {};
-  DbHandle.prototype.findById = function(name, callback) {
-    userDB.find({ name }, function (err, user) {
-      if (!err) {
-        callback(null, user);
-      }
-    });
-  };
+  // DbHandle.prototype.findById = function(name, callback) {
+  //   userDB.find({ name }, function (err, user) {
+  //     if (!err) {
+  //       callback(null, user);
+  //     }
+  //   });
+  // };
 
   DbHandle.prototype.findByName = async (ctx, next) => {
-    // ctx.body = 666;
+    ctx.body = 666;
+    return;
+    // console.log();
     let data = null;
     await userDB.find({ name: ctx.params.name }, function (err, user) {
-      console.log('22222');
+      // console.log('22222');
       if (!err) {
-        console.log('8888');
+        // console.log('8888');
         data = user;
         // ctx.body = 888;
 
@@ -74,6 +76,7 @@ client.once("open", async () => {
     });
     ctx.body = {
       success: true,
+      code: 200,
       data
     };
   };

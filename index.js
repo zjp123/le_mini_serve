@@ -1,22 +1,93 @@
 const Koa = require('koa');
 const app = new Koa();
+const jwt = require("jsonwebtoken");
 const apiRouter = require('./router/route');
+const session = require('koa-session');// 这个只能配合浏览器玩(或者cookie玩)，服务器端自己设置，自己获取是不行的
+// 不用浏览器的话，可以加上redis存储，每次都去Redis拿 就可以了
+const bodyParser = require('koa-bodyparser');
+const cors = require('koa2-cors'); // 没有他ctx.session 获取不到
 const DB = require('./db/db');
 const config = require('./config');
 let DbHandle = new DB();
 
+//配置session的中间件
+app.use(cors({
+  credentials: true
+}));
+
+// 签名key keys作⽤用 ⽤用来对cookie进⾏行行签名
+app.keys = ['lexue_homework_mini'];
+const SESS_CONFIG = {
+  key: 'le_homework', // cookie键名 浏览器中
+  maxAge: 172800000, // 有效期，默认⼀2天
+  httpOnly: true, // 仅服务器器修改
+  signed: true, // 签名cookie
+};
+app.use(bodyParser());
+app.use(session(SESS_CONFIG, app));
+
+app.use(async(ctx, next) => {
+  console.log(ctx.url, 'ctx.urlctx.url');
+  if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
+    await next(); // 如果是login 重新登录  也是可以走到login路由的
+  } else {
+    // console.log('session', ctx.session.userinfo);
+    // if (666) {
+    //   console.log();
+    // } else {
+    //   await next();
+    // }
+    let token = null;
+    console.log(ctx.request.header['authorization'], 'heahdhdhhdhdhdhdh');
+    console.log(ctx.app.context.session_key, ctx.app.context.openid, '之前保存的token');
+    try {
+      token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
+      console.log(token, '解析后的token');
+    } catch (error) {
+      console.log('token 解析失败');
+      ctx.body = {
+        code: 403,
+        success: false,
+        message: 'token 解析失败请重新登录'
+      };
+      return;
+    }
+
+    if (ctx.app.context.session_key === token.data.session_key && ctx.app.context.openid === token.data.openid) {
+      await next();
+    } else {
+      ctx.body = {
+        code: 403,
+        success: false,
+        message: 'token 过期请重新登录'
+      };
+    }
+
+  }
+});
+
+app
+  .use(apiRouter.routes())
+  .use(apiRouter.allowedMethods());
+
 app.use(async(ctx, next) => {
   ctx.DbHandle = DbHandle;
+  ctx.set('Access-Control-Allow-Origin', '*');
+  // ctx.set('Access-Control-Allow-Credentials', true);
+  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With, yourHeaderFeild');
+  ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  ctx.set('Allow', 'PUT, POST, GET, DELETE, OPTIONS');
+  if (ctx.method === 'OPTIONS') {
+
+      ctx.body = 200;
+
+  }
   // ctx; // is the Context
   // ctx.request; // is a koa Request
   // ctx.response; // is a koa Response
 
   await next();
 });
-
-app
-  .use(apiRouter.routes())
-  .use(apiRouter.allowedMethods());
 
 app.use(async ctx => {
   console.log('*******************');
@@ -32,5 +103,5 @@ app.on('error', (err, ctx) => {
 });
 
 app.listen(process.env.PORT || config.port, () => {
-  console.log('成功监听3000端口', process.env.PORT );
+  console.log('成功监听端口', process.env.PORT );
 });
