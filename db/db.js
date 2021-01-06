@@ -19,14 +19,18 @@ client.once("open", async () => {
   // 2.定义⼀一个Schema - Table
   const userSchema = mongoose.Schema({
       openId: String,
-      name: String,
       nickName: String,
       age: Number,
-      area: String,
-      sex: String,
+      city: String,
+      province: String,
+      country: String,
+      language: String,
+      gender: String,
+      watermark: Object,
       date: { type: Date, default: Date.now }, // 指定默认值
-      headImg: String
+      avatarUrl: String
     });
+  userSchema.index({ openId:1, nickName: 1, date: -1 }); // 索引 方便快速查询
   // Schema.methods.testFn = function(cb) {
   //   return this.model('users').find({ name: this.name }, cb);
   // };
@@ -52,13 +56,25 @@ client.once("open", async () => {
   } });
 
   const DbHandle = function () {};
-  // DbHandle.prototype.findById = function(name, callback) {
-  //   userDB.find({ name }, function (err, user) {
-  //     if (!err) {
-  //       callback(null, user);
-  //     }
-  //   });
-  // };
+  DbHandle.prototype.insert = async (param) => {
+    console.log(param, 'paramparamparam');
+    const userOne = new userDB(param);
+    return await userOne.save(function(err, res) {
+      if (err) {
+        console.log(err, '插入错误');
+        return err;
+      } else {
+        console.log(res, '插入成功');
+        return res;
+      }
+    });
+    // ctx.body = {
+    //   success: true,
+    //   code: 200,
+    //   message: '入库成功',
+    //   data: []
+    // };
+  };
 
   DbHandle.prototype.findByName = async (ctx, next) => {
     ctx.body = 666;

@@ -55,8 +55,15 @@ router.post('/decryptUser', async (ctx, next) => {
   // console.log(ctx.session.userinfo, 'ctx.session.userinfo');
   // ctx.session.userinfo = result.result.session_key;
   // ctx.session.userinfo = 'hgjghgh';
+  const inResult =  await ctx.DbHandle.insert(userData);
+  console.log(inResult, 'insertisnsnnsn');
 
-  ctx.body = 5566;
+  ctx.body = {
+    code: 200,
+    success: true,
+    message: '入库成功',
+    data: []
+  };
   // ctx.body = '5566';
 });
 

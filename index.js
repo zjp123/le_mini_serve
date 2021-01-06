@@ -27,43 +27,48 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
+  ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
-  if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
-    await next(); // 如果是login 重新登录  也是可以走到login路由的
-  } else {
+  // if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
+  //   await next(); // 如果是login 重新登录  也是可以走到login路由的
+  // } else {
     // console.log('session', ctx.session.userinfo);
     // if (666) {
     //   console.log();
     // } else {
     //   await next();
     // }
-    let token = null;
-    console.log(ctx.request.header['authorization'], 'heahdhdhhdhdhdhdh');
-    console.log(ctx.app.context.session_key, ctx.app.context.openid, '之前保存的token');
-    try {
-      token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
-      console.log(token, '解析后的token');
-    } catch (error) {
-      console.log('token 解析失败');
-      ctx.body = {
-        code: 403,
-        success: false,
-        message: 'token 解析失败请重新登录'
-      };
-      return;
-    }
-
-    if (ctx.app.context.session_key === token.data.session_key && ctx.app.context.openid === token.data.openid) {
-      await next();
-    } else {
-      ctx.body = {
-        code: 403,
-        success: false,
-        message: 'token 过期请重新登录'
-      };
-    }
-
+  if (ctx.request.header['authorization'] === undefined) { // 第一次登陆 不用校验
+    await next();
+    return;
   }
+  let token = null;
+  console.log(ctx.request.header['authorization'], 'heahdhdhhdhdhdhdh');
+  console.log(ctx.app.context.session_key, ctx.app.context.openid, '之前保存的token');
+  try {
+    token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
+    console.log(token, '解析后的token');
+  } catch (error) {
+    console.log('token 解析失败');
+    ctx.body = {
+      code: 403,
+      success: false,
+      message: 'token 解析失败请重新登录'
+    };
+    return;
+  }
+
+  if (ctx.app.context.session_key === token.data.session_key && ctx.app.context.openid === token.data.openid) {
+    await next();
+  } else {
+    ctx.body = {
+      code: 403,
+      success: false,
+      message: 'token 过期请重新登录'
+    };
+  }
+
+  // }
 });
 
 app
@@ -71,9 +76,8 @@ app
   .use(apiRouter.allowedMethods());
 
 app.use(async(ctx, next) => {
-  ctx.DbHandle = DbHandle;
   ctx.set('Access-Control-Allow-Origin', '*');
-  // ctx.set('Access-Control-Allow-Credentials', true);
+  ctx.set('Access-Control-Allow-Credentials', true);
   ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With, yourHeaderFeild');
   ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   ctx.set('Allow', 'PUT, POST, GET, DELETE, OPTIONS');
@@ -89,11 +93,11 @@ app.use(async(ctx, next) => {
   await next();
 });
 
-app.use(async ctx => {
-  console.log('*******************');
+// app.use(async ctx => {
+//   console.log('*******************');
 
-  ctx.body = 'Hello World';
-});
+//   ctx.body = 'Hello World';
+// });
 
 app.on('error', (err, ctx) => {
   console.log('server error', err, ctx);
