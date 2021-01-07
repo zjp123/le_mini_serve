@@ -58,43 +58,72 @@ client.once("open", async () => {
   const DbHandle = function () {};
   DbHandle.prototype.insert = async (param) => {
     console.log(param, 'paramparamparam');
-    const userOne = new userDB(param);
-    return await userOne.save(function(err, res) {
-      if (err) {
-        console.log(err, '插入错误');
-        return err;
-      } else {
-        console.log(res, '插入成功');
-        return res;
+    // const searchOne = await userDB.findOne({ openId:  param.openId}, function (err, user) {
+    //   // console.log('22222');
+    //   if (!err) {
+    //     // console.log('8888');
+    //     // ctx.body = 888;
+
+
+    //   }
+    // });
+    try {
+      const findResult = await userDB.find({ nickName:  param.nickName});
+      if (findResult.length > 0) {
+        console.log('已经入库');
+        return 'success';
       }
-    });
-    // ctx.body = {
-    //   success: true,
-    //   code: 200,
-    //   message: '入库成功',
-    //   data: []
-    // };
+    } catch (error) {
+      console.log('查询是否入库失败');
+      return 'err';
+    }
+    try {
+      const userOne = new userDB(param);
+      await userOne.save();
+      console.log('插入成功');
+      return 'success';
+    } catch (error) {
+      console.log('插入错误');
+      return 'err';
+
+    }
+
   };
 
   DbHandle.prototype.findByName = async (ctx, next) => {
-    ctx.body = 666;
-    return;
-    // console.log();
-    let data = null;
-    await userDB.find({ name: ctx.params.name }, function (err, user) {
-      // console.log('22222');
-      if (!err) {
-        // console.log('8888');
-        data = user;
-        // ctx.body = 888;
 
-      }
-    });
-    ctx.body = {
-      success: true,
-      code: 200,
-      data
-    };
+    try {
+      const findResult = await userDB.find({ nickName:  '稻麦穗'});
+      console.log(findResult, '查人查人查人查人查人查人查人');
+      ctx.body = {
+        success: true,
+        code: 200,
+        data: findResult
+      };
+    } catch (error) {
+      ctx.body = {
+        success: false,
+        code: 500,
+        data: error
+      };
+    }
+
+    // let data = null;
+    // const searchOne =  await userDB.find({ nickName:  'fff'}, function (err, user) {
+    //   // console.log('22222');
+    //   if (!err) {
+    //     // console.log('8888');
+    //     data = user;
+    //     // ctx.body = 888;
+
+    //   }
+    // });
+    // console.log(searchOne, 'searchOnesearchOnesearchOne');
+    // ctx.body = {
+    //   success: true,
+    //   code: 200,
+    //   data
+    // };
   };
 
   module.exports = DbHandle;

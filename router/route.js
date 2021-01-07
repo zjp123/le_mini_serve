@@ -7,6 +7,8 @@ const config = require('../config');
 const router = new Router({ prefix: '/api' });
 const DB = require('../db/db');
 let DbHandle = new DB();
+const app = require('../util/app-contex');
+
 // jwt
 // const jwt_secret = "lalala";
 
@@ -15,7 +17,8 @@ router.post('/login', async (ctx, next) => {
 
   console.log(ctx.path, ctx.method, ctx.request.body, 'kkkkkkkkkkkk');
   const {code} = ctx.request.body;
-  ctx.app.context.le_code = code;
+  // ctx.app.context.le_code = code;
+  ctx.le_code = code;
   const result = await httpRequest({
     url: `https://api.weixin.qq.com/sns/jscode2session?appid=${config.APPID}&secret=${config.APP_SECRET}&js_code=${code}&grant_type=authorization_code`
   });
@@ -28,8 +31,15 @@ router.post('/login', async (ctx, next) => {
   // ctx.session.userinfo = result.result.session_key;
   // ctx.session.userinfo = 'hgjghgh';
   console.log(result.result, 'login response');
-  ctx.app.context.session_key = result.result.session_key;
-  ctx.app.context.openid = result.result.openid;
+  ctx.aaa = result.result.session_key;
+  ctx.openid = result.result.openid;
+  app.context.session_key = result.result.session_key;
+  app.context.openid = result.result.openid;
+
+  // ctx.diyParam = {
+  //   session_key: result.result.session_key,
+  //   openid: result.result.openid
+  // };
   const le_token = jwt.sign({
     data: result.result,
     // 设置 token 过期时间，⼀一2days，秒为单位
@@ -38,16 +48,20 @@ router.post('/login', async (ctx, next) => {
   // console.log(ctx.session.session_key, 'sessionsessionsession');
   result.token = le_token;
   ctx.body = result;
+  // next();
   // ctx.body = '5566';
+}, ctx => {
+  // console.log(ctx.diyParam, ctx.session_key, 'diyParamdiyParamdiyParam');
+  // => { id: 17, name: "Alex" }
 });
 
 router.post('/decryptUser', async (ctx, next) => {
   // ctx.router available
 
-  console.log(ctx.path, ctx.request.body, ctx.app.context.session_key, 'hhhhhhhhh');
+  console.log(ctx.path, ctx.request.body, ctx.aaa, 'hhhhhhhhh');
 
   const {encryptedData, iv} = ctx.request.body;
-  const pc = new WXBizDataCrypt(config.APPID, ctx.app.context.session_key);
+  const pc = new WXBizDataCrypt(config.APPID, app.context.session_key);
 
   const userData = pc.decryptData(encryptedData , iv);
 
@@ -57,13 +71,21 @@ router.post('/decryptUser', async (ctx, next) => {
   // ctx.session.userinfo = 'hgjghgh';
   const inResult =  await ctx.DbHandle.insert(userData);
   console.log(inResult, 'insertisnsnnsn');
-
-  ctx.body = {
-    code: 200,
-    success: true,
-    message: '入库成功',
-    data: []
-  };
+  if (inResult === 'success') {
+    ctx.body = {
+      code: 200,
+      success: true,
+      message: '入库成功',
+      data: []
+    };
+  } else {
+    ctx.body = {
+      code: 500,
+      success: true,
+      message: '入库失败',
+      data: []
+    };
+  }
   // ctx.body = '5566';
 });
 

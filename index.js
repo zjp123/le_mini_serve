@@ -1,5 +1,6 @@
-const Koa = require('koa');
-const app = new Koa();
+// const Koa = require('koa');
+// const app = new Koa();
+const app = require('./util/app-contex');
 const jwt = require("jsonwebtoken");
 const apiRouter = require('./router/route');
 const session = require('koa-session');// 这个只能配合浏览器玩(或者cookie玩)，服务器端自己设置，自己获取是不行的
@@ -29,46 +30,46 @@ app.use(session(SESS_CONFIG, app));
 app.use(async(ctx, next) => {
   ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
-  // if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
-  //   await next(); // 如果是login 重新登录  也是可以走到login路由的
-  // } else {
+  if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
+    await next(); // 如果是login和decryptUser 不验证
+  } else {
     // console.log('session', ctx.session.userinfo);
     // if (666) {
     //   console.log();
     // } else {
     //   await next();
     // }
-  if (ctx.request.header['authorization'] === undefined) { // 第一次登陆 不用校验
-    await next();
-    return;
-  }
-  let token = null;
-  console.log(ctx.request.header['authorization'], 'heahdhdhhdhdhdhdh');
-  console.log(ctx.app.context.session_key, ctx.app.context.openid, '之前保存的token');
-  try {
-    token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
-    console.log(token, '解析后的token');
-  } catch (error) {
-    console.log('token 解析失败');
-    ctx.body = {
-      code: 403,
-      success: false,
-      message: 'token 解析失败请重新登录'
-    };
-    return;
-  }
-
-  if (ctx.app.context.session_key === token.data.session_key && ctx.app.context.openid === token.data.openid) {
-    await next();
-  } else {
-    ctx.body = {
-      code: 403,
-      success: false,
-      message: 'token 过期请重新登录'
-    };
-  }
-
+  // if (ctx.request.header['authorization'] === undefined) { // 第一次登陆 不用校验
+  //   await next();
+  //   return;
   // }
+    let token = null;
+    // console.log(ctx.session_key, ctx.openid, 'heahdhdhhdhdhdhdh');
+    console.log(app.context.openid, app.context.session_key, '之前保存的token');
+    try {
+      token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
+      console.log(token, '解析后的token');
+    } catch (error) {
+      console.log('token 解析失败');
+      ctx.body = {
+        code: 403,
+        success: false,
+        message: 'token 解析失败请重新登录'
+      };
+      return;
+    }
+
+    if (app.context.session_key === token.data.session_key && app.context.openid === token.data.openid) {
+      await next();
+    } else {
+      ctx.body = {
+        code: 403,
+        success: false,
+        message: 'token 过期请重新登录'
+      };
+    }
+
+  }
 });
 
 app
