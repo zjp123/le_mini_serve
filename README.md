@@ -52,3 +52,5 @@ https://developers.weixin.qq.com/community/develop/doc/000c2424654c40bd9c960e71e
 # 首先默默的先执行login 拿到appid 和 session_key,然后判断有没有获取用户信息权限，如果没有，就展示获取用户权限button，获取之后执行业务代码  业务代码中 判断token 是否过期，过期重新登录
 
 # router中的ctx 不是app.use中的ctx 路由中的ctx添加属性时，只能在当前路由的ctx中用
+
+# log问题 mongoose 问题

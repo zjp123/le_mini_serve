@@ -33,6 +33,8 @@ app.use(async(ctx, next) => {
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
     await next(); // 如果是login和decryptUser 不验证
   } else {
+    // await next();
+    // return;
     // console.log('session', ctx.session.userinfo);
     // if (666) {
     //   console.log();
