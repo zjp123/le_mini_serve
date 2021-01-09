@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 // mongoose自己实现的Promise与规范的Promise存在差异，在这里使用node.js实现的Promise global 是服务器端的全局对象
 mongoose.Promise = global.Promise;
 const config = require('../config');
+const logsUtil = require('../util/handle-logger');
 mongoose.connect(config.mongodb, { useNewUrlParser: config.useNewUrlParser });
 // localhost:27017 会在这个链接下 创建一个lexue_mon数据库
 
@@ -13,7 +14,11 @@ if (process.env.NODE_ENV !== 'production') {
 const client = mongoose.connection;
 let userDB = null;
 
-client.on("error", () => console.error("连接数据库失败"));
+client.on("error", (err) => {
+  console.error("连接数据库失败");
+  logsUtil.logError(err);
+
+});
 
 client.once("open", async () => {
   // 2.定义⼀一个Schema - Table

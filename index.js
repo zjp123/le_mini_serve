@@ -10,6 +10,24 @@ const cors = require('koa2-cors'); // 没有他ctx.session 获取不到
 const DB = require('./db/db');
 const config = require('./config');
 let DbHandle = new DB();
+// logger
+// const logger = require('log4js');
+const logsUtil = require('./util/handle-logger');
+
+
+// app.use(logsUtil.logInfo);
+app.use(async (ctx, next) => {
+  const start = new Date();					          // 响应开始时间
+  let intervals;								              // 响应间隔时间
+  try {
+      await next();
+      intervals = new Date() - start;
+      logsUtil.logResponse(ctx, intervals);	  //记录响应日志
+  } catch (error) {
+      intervals = new Date() - start;
+      logsUtil.logError(ctx, error, intervals);//记录异常日志
+  }
+});
 
 //配置session的中间件
 app.use(cors({
@@ -64,6 +82,7 @@ app.use(async(ctx, next) => {
     if (app.context.session_key === token.data.session_key && app.context.openid === token.data.openid) {
       await next();
     } else {
+      logsUtil.logError(ctx);
       ctx.body = {
         code: 403,
         success: false,
@@ -104,6 +123,7 @@ app.use(async(ctx, next) => {
 
 app.on('error', (err, ctx) => {
   console.log('server error', err, ctx);
+  logsUtil.logError(ctx, err);
   if((ctx.status === 404 && err.status === undefined) || err.status === 500){
     return;
   }

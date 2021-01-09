@@ -7,6 +7,7 @@ const config = require('../config');
 const router = new Router({ prefix: '/api' });
 const DB = require('../db/db');
 let DbHandle = new DB();
+const logsUtil = require('../util/handle-logger');
 // const app = require('../util/app-contex');
 
 // jwt
@@ -14,6 +15,8 @@ let DbHandle = new DB();
 
 router.post('/login', async (ctx, next) => {
   // ctx.router available
+  logsUtil.logHandle(`请求了${ctx.path}接口`);
+  logsUtil.logInfo(`请求了${ctx.path}接口`);
 
   console.log(ctx.path, ctx.method, ctx.request.body, 'kkkkkkkkkkkk');
   const {code} = ctx.request.body;
