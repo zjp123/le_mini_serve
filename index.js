@@ -46,6 +46,8 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
+  await next();
+  return;
   ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
@@ -82,7 +84,7 @@ app.use(async(ctx, next) => {
     if (app.context.session_key === token.data.session_key && app.context.openid === token.data.openid) {
       await next();
     } else {
-      logsUtil.logError(ctx);
+      logsUtil.logError(ctx, {}, Date.now());
       ctx.body = {
         code: 403,
         success: false,
@@ -123,7 +125,7 @@ app.use(async(ctx, next) => {
 
 app.on('error', (err, ctx) => {
   console.log('server error', err, ctx);
-  logsUtil.logError(ctx, err);
+  logsUtil.logError(ctx, err, Date.now());
   if((ctx.status === 404 && err.status === undefined) || err.status === 500){
     return;
   }

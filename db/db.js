@@ -98,7 +98,8 @@ client.once("open", async () => {
   DbHandle.prototype.findByName = async (ctx, next) => {
 
     try {
-      const findResult = await userDB.findOne({ nickName:  '稻麦穗'});
+      const findResult = await userDB.findOne({ nickName:  '稻麦穗'}).exec();
+      // exec 干嘛的？
       console.log(findResult, '查人查人查人查人查人查人查人');
       ctx.body = {
         success: true,

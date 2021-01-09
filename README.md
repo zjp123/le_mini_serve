@@ -60,3 +60,7 @@ app.use((ctx, next) => {
   ctx.diyParam = {};
   next()
 });
+
+# exec 干嘛的
+# async 与 await 在mongoose中 与 ecm6不一致
+# next 与 await next() 区别
