@@ -1,6 +1,6 @@
-// const Koa = require('koa');
-// const app = new Koa();
-const app = require('./util/app-contex');
+const Koa = require('koa');
+const app = new Koa();
+// const app = require('./util/app-contex');
 const jwt = require("jsonwebtoken");
 const apiRouter = require('./router/route');
 const session = require('koa-session');// 这个只能配合浏览器玩(或者cookie玩)，服务器端自己设置，自己获取是不行的

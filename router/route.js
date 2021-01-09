@@ -7,7 +7,7 @@ const config = require('../config');
 const router = new Router({ prefix: '/api' });
 const DB = require('../db/db');
 let DbHandle = new DB();
-const app = require('../util/app-contex');
+// const app = require('../util/app-contex');
 
 // jwt
 // const jwt_secret = "lalala";
@@ -33,8 +33,8 @@ router.post('/login', async (ctx, next) => {
   console.log(result.result, 'login response');
   ctx.aaa = result.result.session_key;
   ctx.openid = result.result.openid;
-  app.context.session_key = result.result.session_key;
-  app.context.openid = result.result.openid;
+  ctx.app.context.session_key = result.result.session_key;
+  ctx.app.context.openid = result.result.openid;
 
   // ctx.diyParam = {
   //   session_key: result.result.session_key,
@@ -61,7 +61,7 @@ router.post('/decryptUser', async (ctx, next) => {
   console.log(ctx.path, ctx.request.body, ctx.aaa, 'hhhhhhhhh');
 
   const {encryptedData, iv} = ctx.request.body;
-  const pc = new WXBizDataCrypt(config.APPID, app.context.session_key);
+  const pc = new WXBizDataCrypt(config.APPID, ctx.app.context.session_key);
 
   const userData = pc.decryptData(encryptedData , iv);
 

@@ -54,3 +54,9 @@ https://developers.weixin.qq.com/community/develop/doc/000c2424654c40bd9c960e71e
 # router中的ctx 不是app.use中的ctx 路由中的ctx添加属性时，只能在当前路由的ctx中用
 
 # log问题 mongoose 问题
+
+# 全局属性问题：
+app.use((ctx, next) => {
+  ctx.diyParam = {};
+  next()
+});
