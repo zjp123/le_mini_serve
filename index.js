@@ -46,8 +46,8 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
-  await next();
-  return;
+  // await next();
+  // return;
   ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据

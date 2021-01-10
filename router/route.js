@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const httpRequest = require('./httpRequest');
 const jwt = require("jsonwebtoken");
-const jwtAuth = require("koa-jwt");
+// const jwtAuth = require("koa-jwt"); // 用户路由验证
 const WXBizDataCrypt = require('../util/WXBizDataCrypt');
 const config = require('../config');
 const router = new Router({ prefix: '/api' });
