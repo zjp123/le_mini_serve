@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const config = require('../config');
 const logsUtil = require('../util/handle-logger');
-mongoose.connect(config.mongodb, { useNewUrlParser: config.useNewUrlParser });
+mongoose.connect(config.mongodb, config.mongoConfig);
 // localhost:27017 会在这个链接下 创建一个lexue_mon数据库
 
 if (process.env.NODE_ENV !== 'production') {

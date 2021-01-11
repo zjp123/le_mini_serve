@@ -64,3 +64,24 @@ app.use((ctx, next) => {
 # exec 干嘛的
 # async 与 await 在mongoose中 与 ecm6不一致
 # next 与 await next() 区别
+
+# promise
+mongoose.connect(uri, options, function(error) {
+  // Check error in initial connection. There is no 2nd param to the callback.
+});
+
+// Or using promises
+mongoose.connect(uri, options).then(
+  () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
+  err => { /** handle initial connection error */ }
+);
+# model 查询
+ find, findById, findOne, 和 where 这些静态方法。
+update 仅仅需要更新而不需要获取该数据
+findByIdAndUpdate 需要返回文档
+
+# Model 的方法中包含查询条件参数的（ find findById count update ）都可以按以下两种方式执行：
+
+传入 callback 参数，操作会被立即执行，查询结果被传给回调函数（ callback ）。
+不传 callback 参数，Query 的一个实例（一个 query 对象）被返回，这个 query 提供了构建查询器的特殊接口。
+# Population 即为此而生  关联查询
