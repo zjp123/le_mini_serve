@@ -46,8 +46,8 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
-  await next();
-  return;
+  // await next();
+  // return;
   ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
@@ -72,11 +72,12 @@ app.use(async(ctx, next) => {
       token = jwt.verify(ctx.request.header['authorization'].split(' ')[1], config.jwt_secret);
       console.log(token, '解析后的token');
     } catch (error) {
-      console.log('token 解析失败');
+      logsUtil.logError(ctx, error, Date.now());
+      console.log('token 过期请重新登录');
       ctx.body = {
         code: 403,
         success: false,
-        message: 'token 解析失败请重新登录'
+        message: 'token 过期请重新登录'
       };
       return;
     }
@@ -88,7 +89,7 @@ app.use(async(ctx, next) => {
       ctx.body = {
         code: 403,
         success: false,
-        message: 'token 过期请重新登录'
+        message: 'token 解析失败, 非本人token'
       };
     }
 

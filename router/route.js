@@ -46,6 +46,7 @@ router.post('/login', async (ctx, next) => {
   const le_token = jwt.sign({
     data: result.result,
     // 设置 token 过期时间，⼀一2days，秒为单位
+    // exp: Math.floor(Date.now() / 1000) + 60 * 1 // 一分钟
     exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 2
   }, config.jwt_secret);
   // console.log(ctx.session.session_key, 'sessionsessionsession');
