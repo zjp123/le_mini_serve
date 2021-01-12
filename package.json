@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development PORT=3000 nodemon index.js",
+    "dev": "cross-env NODE_ENV=development PORT=3000 nodemon --inspect index.js",
     "pro": "cross-env NODE_ENV=production PORT=80 nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
