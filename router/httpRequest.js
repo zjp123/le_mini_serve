@@ -2,8 +2,9 @@
 const request = require('axios');
 const httpRequest = async (obj) => {
   var options = {
-    method: 'get',
+    method: obj.method || 'get',
     url: obj.url,
+    baseURL: obj.baseURL || '',
     // json: {
     //   'shop_no': '11047059',
     //   'origin_id': 'o_111',
@@ -21,6 +22,13 @@ const httpRequest = async (obj) => {
       'Accept': 'application/json'  // 需指定这个参数 否则 在特定的环境下 会引起406错误
     }
   };
+  if (obj.method === 'get' || obj.method === undefined) {
+    options.method = 'get';
+    options.params = obj.data || null;
+  }
+  if (obj.method === 'post') {
+    options.params = obj.data || null;
+  }
   return await request(options).then(res => {
     return {
       code: res.status,

@@ -3,6 +3,7 @@ const app = new Koa();
 // const app = require('./util/app-contex');
 const jwt = require("jsonwebtoken");
 const apiRouter = require('./router/route');
+const apiLexuelearnRouter = require('./router/lexuelearn-router');
 const session = require('koa-session');// 这个只能配合浏览器玩(或者cookie玩)，服务器端自己设置，自己获取是不行的
 // 不用浏览器的话，可以加上redis存储，每次都去Redis拿 就可以了
 const bodyParser = require('koa-bodyparser');
@@ -46,8 +47,8 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
-  // await next();
-  // return;
+  await next();
+  return;
   ctx.DbHandle = DbHandle;
   console.log(ctx.url, 'ctx.urlctx.url');
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
@@ -99,6 +100,11 @@ app.use(async(ctx, next) => {
 app
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods());
+
+// 拆分路由 lexuelearn
+app
+.use(apiLexuelearnRouter.routes())
+.use(apiLexuelearnRouter.allowedMethods());
 
 app.use(async(ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*');
