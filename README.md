@@ -85,3 +85,5 @@ findByIdAndUpdate 需要返回文档
 传入 callback 参数，操作会被立即执行，查询结果被传给回调函数（ callback ）。
 不传 callback 参数，Query 的一个实例（一个 query 对象）被返回，这个 query 提供了构建查询器的特殊接口。
 # Population 即为此而生  关联查询
+
+# koa 中next 前不加await，就是同步任务，不管是不是async函数
