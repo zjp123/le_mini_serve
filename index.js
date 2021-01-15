@@ -47,9 +47,9 @@ app.use(bodyParser());
 app.use(session(SESS_CONFIG, app));
 
 app.use(async(ctx, next) => {
-  // await next();
-  // return;
   ctx.DbHandle = DbHandle;
+  await next();
+  return;
   console.log(ctx.url, 'ctx.urlctx.url');
   if (ctx.url.indexOf('login') > -1 || ctx.url.indexOf('decryptUser') > -1) { // 如果是登陆和解密敏感数据
     await next(); // 如果是login和decryptUser 不验证
@@ -109,7 +109,7 @@ app
 app.use(async(ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*');
   ctx.set('Access-Control-Allow-Credentials', true);
-  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With, yourHeaderFeild');
+  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With, zjp, ctt');
   ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   ctx.set('Allow', 'PUT, POST, GET, DELETE, OPTIONS');
   if (ctx.method === 'OPTIONS') {

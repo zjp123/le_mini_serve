@@ -5,6 +5,7 @@ const logsConfig = require('../log/log-config');
 log4js.configure(logsConfig);
 //调用预先定义的日志名称
 const resLogger = log4js.getLogger("resLogger");
+const requestLogger = log4js.getLogger("requestLogger");
 const errorLogger = log4js.getLogger("errorLogger");
 const handleLogger = log4js.getLogger("handleLogger");
 const consoleLogger = log4js.getLogger();
@@ -21,11 +22,40 @@ const formatText = {
       logText += "*************** info log end ***************" + "\n";
       return logText;
   },
+  request_diy: function(option, resTime) {
+    let logText = new String();
+    let method = option.method;
+    //访问方法
+    logText += "request method: " + method + "\n";
+    // logText += "request all header: " + option.headers + "\n";
+    for (const [key, value] of Object.entries(option)) {
+      if (typeof value === 'object') {
+        logText += "request "+key+": " + JSON.stringify(value) + "\n";
+      }else{
+      logText += "request "+key+": " + value + "\n";
+      }
+    }
+    //请求原始地址
+    //客户端ip
+    //开始时间
+    //请求参数
+    // if (String(method).toLocaleUpperCase() === 'GET') {
+    //     logText += "request query:  " + JSON.stringify(option.params) + "\n";
+    //     // startTime = req.query.requestStartTime;
+    // } else {
+    //     logText += "request body: " + "\n" + JSON.stringify(option.data) + "\n";
+    //     // startTime = req.body.requestStartTime;
+    // }
+    //服务器响应时间
+    logText += "response time: " + new Date().toLocaleString() + "\n";
+    return logText;
+  },
   request: function(req, resTime) {
       let logText = new String();
       let method = req.method;
       //访问方法
       logText += "request method: " + method + "\n";
+      logText += "request all header: " + req.header + "\n";
       logText += "request header: " + req.header['authorization'] + "\n";
       //请求原始地址
       logText += "request originalUrl:  " + req.originalUrl + "\n";
@@ -101,6 +131,12 @@ module.exports = {
           resLogger.info(formatText.response(ctx, resTime));
       }
   },
+  //封装请求日志
+  logRequest: function(ctx, resTime) {
+    if (ctx) {
+      requestLogger.info(formatText.request_diy(ctx, resTime));
+    }
+},
   //封装操作日志
   logHandle: function(res) {
       if (res) {

@@ -1,5 +1,7 @@
 
 const request = require('axios');
+const logsUtil = require('../util/handle-logger');
+
 const httpRequest = async (obj) => {
   var options = {
     method: obj.method || 'get',
@@ -27,8 +29,14 @@ const httpRequest = async (obj) => {
     options.params = obj.data || null;
   }
   if (obj.method === 'post') {
-    options.params = obj.data || null;
+    options.data = obj.data || null;
   }
+  if (obj.header) {
+    for (const [key, value] of Object.entries(obj.header)) {
+      options.headers[key] = value;
+    }
+  }
+  logsUtil.logRequest(options);
   return await request(options).then(res => {
     return {
       code: res.status,

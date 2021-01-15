@@ -7,6 +7,11 @@ const errorPath = "/error";
 const errorFileName = "error";
 const errorLogPath = baseLogPath + errorPath + "/" + errorFileName;
 
+// 请求日志node-向第三方服务器发送的请求日志
+const requestPath = "/request";
+const requestFileName = "request";
+const requestLogPath = baseLogPath + requestPath + "/" + requestFileName;
+
 /*请求数据得到响应时输出响应日志*/
 //响应日志目录、文件名、输出完整路径
 const responsePath = "/response";
@@ -34,6 +39,16 @@ module.exports = {
           "numBackups": 3,
           "path": errorPath
       },
+      "requestLogger": {
+        "type": "dateFile",
+          "filename": requestLogPath,
+          "pattern": "-yyyy-MM-dd-hh.log",
+          "alwaysIncludePattern": true,
+          "encoding": "utf-8",
+          "maxLogSize": 10485760, // 10M
+          "numBackups": 3,
+          "path": requestPath
+      },
       "resLogger": {
           "type": "dateFile",
           "filename": responseLogPath,
@@ -59,6 +74,7 @@ module.exports = {
   categories: {
     "default": {"appenders": ["rule-console"], "level": "all"},
     "resLogger": {"appenders": ["resLogger"], "level": "info"},
+    "requestLogger": {"appenders": ["requestLogger"], "level": "info"},
     "errorLogger": {"appenders": ["errorLogger"], "level": "error"},
     "handleLogger": {"appenders": ["handleLogger"], "level": "all"},
     "http": {"appenders": ["resLogger"], "level": "info"}

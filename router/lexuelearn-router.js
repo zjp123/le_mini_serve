@@ -9,6 +9,10 @@ router.get('/amaterasu/homework/recommend_homework/detail', async (ctx, next) =>
     baseURL: 'https://zkapiskfc.lexue.com',
     url: '/lexuelearn/amaterasu/homework/recommend_homework/detail',
     methods: 'post',
+    header: {
+      zjp: 'zjp',
+      ctt: 'ctt'
+    },
     data: {
       classIds: '100498',
       homework_id: 33,
