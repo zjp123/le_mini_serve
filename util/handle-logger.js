@@ -32,7 +32,7 @@ const formatText = {
       if (typeof value === 'object') {
         logText += "request "+key+": " + JSON.stringify(value) + "\n";
       }else{
-      logText += "request "+key+": " + value + "\n";
+        logText += "request "+key+": " + value + "\n";
       }
     }
     //请求原始地址

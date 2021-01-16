@@ -20,11 +20,13 @@
   "homepage": "https://github.com/zjp123/le_mini_serve#readme",
   "devDependencies": {
     "@babel/plugin-transform-async-to-generator": "^7.12.1",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "koa2-connect": "^1.0.2"
   },
   "dependencies": {
     "@koa/router": "^10.0.0",
     "axios": "^0.21.1",
+    "http-proxy-middleware": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

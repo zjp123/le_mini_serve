@@ -1,6 +1,9 @@
 const Koa = require('koa');
 const app = new Koa();
 // const app = require('./util/app-contex');
+// 1. 引入http-proxy-middleware模块
+const {createProxyMiddleware} = require('http-proxy-middleware');
+const k2c = require('koa2-connect');
 const jwt = require("jsonwebtoken");
 const apiRouter = require('./router/route');
 const apiLexuelearnRouter = require('./router/lexuelearn-router');
@@ -15,6 +18,38 @@ let DbHandle = new DB();
 // const logger = require('log4js');
 const logsUtil = require('./util/handle-logger');
 
+//代理配置
+// 将请求路径按“代理中间件配置项”进行请求
+// app.use(async (ctx, next) => {
+//   const url = ctx.path;
+//   if (url.indexOf('lexuelearn')) {
+//     ctx.respond = false;
+//     await k2c(
+//       createProxyMiddleware({
+//         target: 'http://127.0.0.1:8899',
+//         changeOrigin: true,
+//         secure: false,
+//       }),
+//     )(ctx, next);
+//   }
+//   return await next();
+// });
+// app.use(async (ctx, next) => {
+//   if(ctx.url.indexOf('lexuelearn') > -1) {
+//       ctx.respond = false;
+//       await k2c(
+//         createProxyMiddleware({
+//           target: 'http://127.0.0.1:8899', // 服务器地址
+//           changeOrigin: true,
+//           secure: false,
+//           // pathRewrite: {
+//           //     '^/v1' : '/mobile/v1'
+//           // }
+//         })(ctx, next)
+//       );
+//   }
+//   return await next();
+// });
 
 // app.use(logsUtil.logInfo);
 app.use(async (ctx, next) => {
