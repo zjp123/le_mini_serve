@@ -20,6 +20,7 @@ client.on("error", (err) => {
 
 });
 
+// 这个once的意思是 自始至终都只会执行一次，所以并不会  多次创建！
 client.once("open", async () => {
   // 2.定义⼀一个Schema - Table
   const userSchema = mongoose.Schema({
